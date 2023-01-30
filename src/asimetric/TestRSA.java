@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class TestRSA {
 
-    public static void main(String[] args) throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public static void main(String[] args) throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, SignatureException {
 
         KeyStore keyStore = KeyStoreManager.loadKeyStore("ismkeystore.ks", "passks", "pkcs12");
         KeyStoreManager.listKeyStoreContent(keyStore);
@@ -44,6 +44,11 @@ public class TestRSA {
         } else {
             System.out.println("huston we have different keys");
         }
+
+        //ATENTIE! Algoritmul trebuie sa fie compatibil cu cheia (RSA cu RSA)
+        byte[] digitalSignature = RSASign.generateDigitalSignature("text.txt", ism1PrivKeyFromKS, "SHA256withRSA");
+        System.out.println(Util.getHex(digitalSignature));
+        RSASign.validateDigitalSIgnature("text.txt", ism1PubKeyFromKS, digitalSignature, "SHA256withRSA");
     }
 
 }

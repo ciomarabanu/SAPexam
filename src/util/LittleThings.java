@@ -26,6 +26,8 @@ public class LittleThings {
 
         var newLine = System.getProperty("line.separator").getBytes();
 
+        byte[] iv = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
         // String to byte[]:
         String a = "some bytes";
         byte[] b = a.getBytes();

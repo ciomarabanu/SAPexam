@@ -38,6 +38,7 @@ public class Util {
 
     public static byte[] getSHA256(byte[] values) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
+        //md.update(values);
         return md.digest(values);
     }
 

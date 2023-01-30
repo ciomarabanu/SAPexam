@@ -23,6 +23,7 @@ public class AES_ECB_enc {
                                   String algorithm)
         throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
+        //==== open input file ====
         File input = new File(inputFileName);
         if (!input.exists()) {
             throw new FileNotFoundException();
@@ -30,6 +31,7 @@ public class AES_ECB_enc {
         FileReader fr = new FileReader(input);
         BufferedReader br = new BufferedReader(fr);
 
+        //==== open key file ====
         File keyFile = new File(keyFileName);
         if (!input.exists()) {
             throw new FileNotFoundException();
@@ -38,7 +40,7 @@ public class AES_ECB_enc {
         BufferedInputStream bis = new BufferedInputStream(fis);
         var key = bis.readAllBytes();
 
-
+        //==== open output file ====
         File output = new File(outputFileName);
         if (!output.exists()) {
             output.createNewFile();
@@ -47,9 +49,7 @@ public class AES_ECB_enc {
         FileOutputStream fos = new FileOutputStream(output);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-        var sha256 = MessageDigest.getInstance("SHA-256");
-
-        //add code here
+        
         Cipher cipher = Cipher.getInstance(algorithm + "/ECB/PKCS5Padding");
         SecretKeySpec keySpec = new SecretKeySpec(key, algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);

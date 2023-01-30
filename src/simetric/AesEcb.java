@@ -34,23 +34,18 @@ public class AesEcb {
         BadPaddingException{
 
         //deschidem fisierele
-        File fisierIntrare =
-            new File(inputFile);
+        File fisierIntrare = new File(inputFile);
         if(!fisierIntrare.exists())
             throw new FileNotFoundException();
 
-        FileInputStream fis =
-            new FileInputStream(fisierIntrare);
-        FileOutputStream fos =
-            new FileOutputStream(outputFile);
+        FileInputStream fis = new FileInputStream(fisierIntrare);
+        FileOutputStream fos = new FileOutputStream(outputFile);
 
         //1. initializare cifru - algoritm
-        Cipher cipher =
-            Cipher.getInstance(
-                "AES/ECB/PKCS5Padding", provider);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", provider);
+
         //2. Definire cheie + initializare cifru
-        SecretKey secretKey =
-            new SecretKeySpec(key, "AES");
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
         //3. Citire blocuri + criptare

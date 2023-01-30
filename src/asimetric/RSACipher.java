@@ -1,12 +1,9 @@
 package asimetric;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.security.*;
 
 public class RSACipher {
     public static byte[] encrypt(Key key, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -26,4 +23,6 @@ public class RSACipher {
 
         return cipher.doFinal(cipherText);
     }
+
+
 }
