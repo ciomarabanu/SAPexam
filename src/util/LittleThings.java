@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.util.Base64;
 
 public class LittleThings {
@@ -14,6 +15,7 @@ public class LittleThings {
         // boolean -> 1 bit
         // byte -> 1 Byte ( from -128 to 127)
         // char -> 2 Bytes (in C/C++ char -> 1Byte)
+        // short -> 2 Bytes
         // int -> 4 Bytes
         // float -> 4 Bytes (for fractional nums)
         // long -> 8 BYTES
@@ -34,6 +36,10 @@ public class LittleThings {
 
         // byte[] to string:
         String c = new String(b); //b is a byte[]
+
+        //short to byte[] (poti sa pui si int)
+        short sum = 846+299;
+        var puzzle= ByteBuffer.allocate(2).putShort(sum).array();
 
         //BYTE and HEXA format:
         byte num = 0b0000_0010;

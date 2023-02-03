@@ -18,9 +18,14 @@ public class TestRSA {
         KeyStore keyStore = KeyStoreManager.loadKeyStore("ismkeystore.ks", "passks", "pkcs12");
         KeyStoreManager.listKeyStoreContent(keyStore);
 
+        //GET PUBLIC KEY FROM CERTIFICATE
         PublicKey ism1PubKey = KeyStoreManager.getCertificateKey("ISMCertificateX509.cer");
         System.out.println("ism1 key algorithm is " + ism1PubKey.getAlgorithm());
         System.out.println(Util.getHex(ism1PubKey.getEncoded()));
+
+        PublicKey cppPubKey = KeyStoreManager.getCertificateKey("MaraCert.cer");
+        System.out.println("cppGeneratedCert key algorithm is " + cppPubKey.getAlgorithm());
+        System.out.println(Util.getHex(cppPubKey.getEncoded()));
 
 
         PublicKey ism1PubKeyFromKS = KeyStoreManager.getKeyStorePublicKey(keyStore, "ismkey1");

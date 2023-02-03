@@ -14,10 +14,13 @@ import java.security.SecureRandom;
 
 public class SymmetricEncryption {
 
-    //ECB = electronic code book
-    //algorithm - DES, tripleDES, AES
+    //ECB doesn't need IV; CBC; CTR; CTS
+    //algorithm - DES,
+    //          - tripleDES -> DESede (algorithm name)
+    //          - AES -> AES is a 128-bit block cipher supporting keys of 128, 192, and 256 bits.
     //cipher class in java documentation
     //cipher trebuie initializat cu key
+
 
     public static void encryptECB (String inputFile, String key, String algorithm, String cypherfile) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         File input = new File(inputFile);
@@ -211,6 +214,205 @@ public class SymmetricEncryption {
         bos.close();
 
     }
+
+    public static void encryptCTR(
+        String inputFile, String key, String algorithm, String cipherFile) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+
+        File input = new File(inputFile);
+        if(!input.exists()) {
+            throw new FileNotFoundException();
+        }
+
+        FileInputStream fis = new FileInputStream(input);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        File output = new File(cipherFile);
+        if(!output.exists()) {
+            output.createNewFile();
+        }
+
+        FileOutputStream fos = new FileOutputStream(output);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+
+        Cipher cipher = Cipher.getInstance(algorithm + "/CTR/NoPadding");
+
+
+        //define Counter initial value
+        byte[] counterInitialValue = new byte[cipher.getBlockSize()];
+        //our choice
+        counterInitialValue[counterInitialValue.length-1] =
+            (byte) 0xff;
+
+        IvParameterSpec ivParamSpec = new IvParameterSpec(counterInitialValue);
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), algorithm);
+
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParamSpec);
+
+        byte[] buffer = new byte[cipher.getBlockSize()];
+        int noBytes = 0;
+        byte[] cipherBuffer;
+
+        while(noBytes != -1) {
+            noBytes = bis.read(buffer);
+            if(noBytes != -1) {
+                cipherBuffer = cipher.update(buffer, 0, noBytes);
+                bos.write(cipherBuffer);
+            }
+        }
+        cipherBuffer = cipher.doFinal();
+        bos.write(cipherBuffer);
+
+        fis.close();
+        bos.close();
+    }
+
+    public static void decryptCTR(
+        String inputFile, String key, String algorithm, String plainFile) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+
+        File input = new File(inputFile);
+        if(!input.exists()) {
+            throw new FileNotFoundException();
+        }
+
+        FileInputStream fis = new FileInputStream(input);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        File output = new File(plainFile);
+        if(!output.exists()) {
+            output.createNewFile();
+        }
+
+        FileOutputStream fos = new FileOutputStream(output);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+
+        Cipher cipher = Cipher.getInstance(algorithm + "/CTR/NoPadding");
+
+
+        //define Counter initial value
+        byte[] counterInitialValue = new byte[cipher.getBlockSize()];
+        //our choice
+        counterInitialValue[counterInitialValue.length-1] =
+            (byte) 0xff;
+
+        IvParameterSpec ivParamSpec = new IvParameterSpec(counterInitialValue);
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), algorithm);
+
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
+
+        byte[] buffer = new byte[cipher.getBlockSize()];
+        int noBytes = 0;
+        byte[] cipherBuffer;
+
+        while(noBytes != -1) {
+            noBytes = bis.read(buffer);
+            if(noBytes != -1) {
+                cipherBuffer = cipher.update(buffer, 0, noBytes);
+                bos.write(cipherBuffer);
+            }
+        }
+        cipherBuffer = cipher.doFinal();
+        bos.write(cipherBuffer);
+
+        fis.close();
+        bos.close();
+    }
+
+    public static void encryptCTS(
+        String inputFile, String key, String algorithm, String cipherFile) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+
+        File input = new File(inputFile);
+        if(!input.exists()) {
+            throw new FileNotFoundException();
+        }
+
+        FileInputStream fis = new FileInputStream(input);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        File output = new File(cipherFile);
+        if(!output.exists()) {
+            output.createNewFile();
+        }
+
+        FileOutputStream fos = new FileOutputStream(output);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+        Cipher cipher = Cipher.getInstance(algorithm + "/CTS/NoPadding");
+
+        //you need an IV because CTS is implemented in CBC mode
+        IvParameterSpec iv = new IvParameterSpec(new byte[cipher.getBlockSize()]);
+
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
+
+        byte[] buffer = new byte[cipher.getBlockSize()];
+        int noBytes = 0;
+        byte[] cipherBuffer;
+
+        while(noBytes != -1) {
+            noBytes = bis.read(buffer);
+            if(noBytes != -1) {
+                cipherBuffer = cipher.update(buffer, 0, noBytes);
+                bos.write(cipherBuffer);
+            }
+        }
+        cipherBuffer = cipher.doFinal();
+        bos.write(cipherBuffer);
+
+        fis.close();
+        bos.close();
+    }
+
+    public static void decryptCTS(
+        String cipherFile, String key, String algorithm, String plainFile) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+
+        File input = new File(cipherFile);
+        if(!input.exists()) {
+            throw new FileNotFoundException();
+        }
+
+        FileInputStream fis = new FileInputStream(input);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        File output = new File(plainFile);
+        if(!output.exists()) {
+            output.createNewFile();
+        }
+        FileOutputStream fos = new FileOutputStream(output);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+
+
+        Cipher cipher = Cipher.getInstance(algorithm + "/CTS/NoPadding");
+
+        //you need an IV because CTS is implemented in CBC mode
+        IvParameterSpec iv = new IvParameterSpec(new byte[cipher.getBlockSize()]);
+
+        cipher.init(
+            Cipher.DECRYPT_MODE,
+            new SecretKeySpec(key.getBytes(), algorithm),
+            iv);
+
+        byte[] inputBuffer = new byte[cipher.getBlockSize()];
+        byte[] outputBuffer;
+        int noBytes = 0;
+
+        while(noBytes != -1) {
+            noBytes = bis.read(inputBuffer);
+            if(noBytes != -1) {
+                outputBuffer = cipher.update(inputBuffer,0,noBytes);
+                bos.write(outputBuffer);
+            }
+        }
+
+        outputBuffer = cipher.doFinal();
+        bos.write(outputBuffer);
+
+        bos.close();
+        fis.close();
+    }
+
 
 
 }
